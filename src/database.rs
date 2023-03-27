@@ -3,18 +3,18 @@ use serde::Serialize;
 use serde_json;
 use std::collections::HashMap;
 use std::fs::{self, File};
-use std::io::{Error, Write, self};
+use std::io::{Error, Write, self, Read};
 use std::path::{PathBuf};
+use std::io::{BufReader, BufRead};
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Database {
-    path: PathBuf,
     data: HashMap<std::string::String, Vec<HashMap<std::string::String, std::string::String>>>,
     filename: std::string::String,
 
 }
 
 impl Database {
-    pub  fn new(name: &str) -> io::Result<Self> {
+    pub fn new(name: &str) -> io::Result<Self> {
         let mut path = dirs::home_dir().ok_or(io::Error::new(
             io::ErrorKind::NotFound,
             "Failed to get home directory",
@@ -22,8 +22,17 @@ impl Database {
         path.push(".aidadb");
         path.push("databases");
         fs::create_dir_all(&path)?;
-        path.push(name.to_owned()+".aidb");
-        Ok(Self { path, data: Default::default(), filename: "".to_string() })
+        path.push(name.to_owned() + ".aidb");
+        let mut file = File::open(&path)?;
+        let mut contents = String::new();
+        file.read_to_string(&mut contents)?;
+        let data: HashMap<String, Vec<HashMap<String, String>>> =
+            serde_json::from_str(&contents)?;
+
+        Ok(Self {
+            data,
+            filename: name.to_string(),
+        })
     }
 
     pub fn create_database(&mut self, name: &str) -> io::Result<()> {
@@ -39,8 +48,15 @@ impl Database {
     }
 
     pub fn save(&self) -> Result<(), Error> {
+        let mut path = dirs::home_dir().ok_or(io::Error::new(
+            io::ErrorKind::NotFound,
+            "Failed to get home directory",
+        ))?;
+        path.push(".aidadb");
+        path.push("databases");
+        path.push(self.filename.to_string() + ".aidb");
         let serialized = serde_json::to_string(&self.data)?;
-        let mut file = File::create(&self.path)?;
+        let mut file = File::create(&path)?;
         file.write_all(serialized.as_bytes())?;
         Ok(())
     }
