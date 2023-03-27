@@ -52,3 +52,34 @@ Inserted row into table <table_name>.
 > select <table_name>
 <info from table>.
 ```
+
+# Examples:
+
+<b>Create database request:</b>
+```console
+> create test
+Database created successfully
+```
+
+<b>Select database request:</b>
+```console
+> use test
+Switched to database 'test'
+Current database path: (Windows)'C:\Users\<username>\.aidadb\databases\test.aidb' / (Linux or MacOs) '/home/<username>/.aidadb/databases/test.aidb'
+```
+
+<b>NOTE:</b> To use the next requests u need to select database in which u can add or from which u can get information!
+
+<b>Insert in table request:</b>
+```console
+> insert test-users id=1 name='User' age=10
+Inserted row into table test-users.
+```
+<b>NOTE:</b> U can create new tables using the same command; Row size of data is infinity.
+
+
+<b>Select info from table request:</b>
+```console
+> select test-users
+id=1 name='User' age=10.
+```
