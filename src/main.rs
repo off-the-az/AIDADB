@@ -1,6 +1,5 @@
 mod database;
 
-
 use database::Database;
 use std::collections::HashMap;
 use std::io::{self, Write};
@@ -30,7 +29,7 @@ fn main() {
                 if db_file_path.exists() {
                     println!("Database already exists");
                 } else {
-                    let new_db = Database::new(db_file_path.to_str().unwrap()).unwrap();
+                    let new_db = Database::new(db_name).unwrap();
                     println!("Database created successfully");
                     db = Some(new_db);
                 }
@@ -49,14 +48,14 @@ fn main() {
             "insert" => {
                 if let Some(ref mut db) = db {
                     let table = parts.next().unwrap();
-                    let mut row = HashMap::new();
+                    let mut row:HashMap<std::string::String, std::string::String> = HashMap::new();
                     for part in parts {
                         let mut split = part.split('=');
                         let key = split.next().unwrap();
                         let value = split.next().unwrap();
                         row.insert(key.to_string(), value.to_string());
                     }
-                    if let Err(err) = db.insert(table, row) {
+                    if let Err(err) = db.insert(table,row) {
                         println!("Error inserting row: {}", err);
                     } else {
                         println!("Inserted row into table {}.", table);
