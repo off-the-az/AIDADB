@@ -1,9 +1,8 @@
 use serde::Deserialize;
 use serde::Serialize;
-use serde_json;
 use std::collections::HashMap;
-use std::fs::{self, File};
-use std::io::{Error, Write, self, Read};
+use std::fs::{self, File, OpenOptions};
+use std::io::{Error, Write, self, Read, BufWriter};
 use std::path::{PathBuf};
 use std::io::{BufReader, BufRead};
 #[derive(Debug, Serialize, Deserialize)]
@@ -23,11 +22,19 @@ impl Database {
         path.push("databases");
         fs::create_dir_all(&path)?;
         path.push(name.to_owned() + ".aidb");
-        let mut file = File::open(&path)?;
-        let mut contents = String::new();
-        file.read_to_string(&mut contents)?;
-        let data: HashMap<String, Vec<HashMap<String, String>>> =
-            serde_json::from_str(&contents)?;
+
+        let file = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .create(true)
+            .open(&path)?;
+
+        let reader = BufReader::new(&file);
+
+        let data= match serde_cbor::from_reader(reader) {
+            Ok(parsed_data) => parsed_data,
+            Err(_) => HashMap::new(),
+        };
 
         Ok(Self {
             data,
@@ -55,9 +62,10 @@ impl Database {
         path.push(".aidadb");
         path.push("databases");
         path.push(self.filename.to_string() + ".aidb");
-        let serialized = serde_json::to_string(&self.data)?;
         let mut file = File::create(&path)?;
-        file.write_all(serialized.as_bytes())?;
+        let mut writer = BufWriter::new(file);
+        serde_cbor::to_writer(&mut writer, &self.data).unwrap();
+        writer.flush()?;
         Ok(())
     }
 
@@ -125,4 +133,3 @@ impl Database {
         Ok(())
     }
 }
-
