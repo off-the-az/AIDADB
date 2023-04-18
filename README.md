@@ -8,6 +8,7 @@ Now we have this query commnads:
   <li><b>use</b></li>
   <li><b>insert</b></li>
   <li><b>select</b></li>
+  <li><b>delete</b></li>
 </ol>
 
 
