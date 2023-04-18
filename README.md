@@ -53,6 +53,12 @@ Inserted row into table <table_name>.
 <info from table>.
 ```
 
+<b>Delete row from table request:</b>
+```console
+> delete <table_name> where <condition>
+<info from table>.
+```
+
 # Examples:
 
 <b>Create database request:</b>
@@ -82,4 +88,10 @@ Inserted row into table test-users.
 ```console
 > select test-users
 id=1 name='User' age=10.
+```
+
+<b>Delete row from table request:</b>
+```console
+> delete test-users where id=1
+Row deleted!
 ```
