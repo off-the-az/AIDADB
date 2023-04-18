@@ -95,6 +95,60 @@ fn main() {
                     println!("No database selected");
                 }
             }
+            /*
+            "update" => {
+                if let Some(ref mut db) = db {
+                    let table = parts.next().unwrap();
+                    let condition = if let Some(where_index) = input.find("where") {
+                        let where_clause = &input[where_index + 6..];
+                        let mut where_parts = where_clause.split('=');
+                        let key = where_parts.next().unwrap();
+                        let value = where_parts.next().unwrap();
+                        Some([(key.to_string(), value.to_string())].iter().cloned().collect())
+                    } else {
+                        None
+                    };
+                    match db.update(table, condition) {
+                        Ok(rows) => {
+                            if rows.is_empty() {
+                                println!("No rows found in table {}.", table);
+                            } else {
+                                for row in rows {
+                                    for (key, value) in row.iter() {
+                                        print!("{}={}, ", key, value);
+                                    }
+                                    println!("");
+                                }
+                            }
+                        }
+                        Err(err) => println!("Error selecting rows: {}", err),
+                    }
+                } else {
+                    println!("No database selected");
+                }
+            }*/
+            "delete" => {
+                if let Some(ref mut db) = db {
+                    let table = parts.next().unwrap();
+                    let condition = if let Some(where_index) = input.find("where") {
+                        let where_clause = &input[where_index + 6..];
+                        let mut where_parts = where_clause.split('=');
+                        let key = where_parts.next().unwrap();
+                        let value = where_parts.next().unwrap();
+                        Some([(key.to_string(), value.to_string())].iter().cloned().collect())
+                    } else {
+                        None
+                    };
+                    match db.delete(table, condition) {
+                        Ok(rows) => {
+                            println!("Row deleted!")
+                        }
+                        Err(err) => println!("Error selecting rows: {}", err),
+                    }
+                } else {
+                    println!("No database selected");
+                }
+            }
             _ => {
                 println!("Invalid command.");
             }

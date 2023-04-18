@@ -9,7 +9,6 @@ use std::io::{BufReader, BufRead};
 pub struct Database {
     data: HashMap<std::string::String, Vec<HashMap<std::string::String, std::string::String>>>,
     filename: std::string::String,
-
 }
 
 impl Database {
